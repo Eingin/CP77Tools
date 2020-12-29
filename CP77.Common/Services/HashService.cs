@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.IoC;
 using CP77.Common.Tools.FNV1A;
-using CP77Tools.Common.Services;
-using WolvenKit.Common.Services;
 
 namespace CP77.Common.Services
 {
@@ -33,11 +31,11 @@ namespace CP77.Common.Services
         private static readonly IAppSettingsService Appsettings = ServiceLocator.Default.ResolveType<IAppSettingsService>();
 
         private readonly HttpClient _client = new();
+
+        //private const string ResourceUrl = "https://nyxmods.com/cp77/files/archivehashes.csv";
+        private const string ResourceUrl = "https://graphicscore.dev/cyberpunk/cyberbot/data/loosehashes.txt";
         
-        private const string ResourceUrl = "https://nyxmods.com/cp77/files/archivehashes.csv";
         
-        private readonly string _eTagPath =
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/archivehashes-etag.txt");
 
         
 
@@ -48,12 +46,12 @@ namespace CP77.Common.Services
                 // redownload
                 try
                 {
-                    if (File.Exists(_eTagPath))
-                        File.Delete(_eTagPath);
+                    if (File.Exists(Appsettings.ETagPath))
+                        File.Delete(Appsettings.ETagPath);
                 }
                 catch (Exception)
                 {
-                    Logger.LogString($"Could not delete file {_eTagPath}.", Logtype.Error);
+                    Logger.LogString($"Could not delete file {Appsettings.ETagPath}.", Logtype.Error);
                 }
             }
 
@@ -124,16 +122,16 @@ namespace CP77.Common.Services
 
         private async Task WriteEtag(string etag)
         {
-            await using var fs = File.Create(_eTagPath);
+            await using var fs = File.Create(Appsettings.ETagPath);
             await using var writer = new StreamWriter(fs);
             await writer.WriteLineAsync(etag);
         }
 
         private string GetLastEtag()
         {
-            if (!File.Exists(_eTagPath)) return null;
+            if (!File.Exists(Appsettings.ETagPath)) return null;
             
-            var lines = File.ReadLines(_eTagPath)
+            var lines = File.ReadLines(Appsettings.ETagPath)
                 .ToList();
 
             if (!lines.Any() || lines.Count > 1)
@@ -142,11 +140,11 @@ namespace CP77.Common.Services
             return lines.Single();
         }
 
-        public async Task ReloadLocally()
+        public void ReloadLocally()
         {
             Logger.LogString("Loading local filename hashes...", Logtype.Important);
 
-            Stopwatch watch = new Stopwatch();
+            Stopwatch watch = new();
             watch.Restart();
 
             var hashDictionary = new ConcurrentDictionary<ulong, string>();

@@ -11,11 +11,9 @@ using Catel.IoC;
 using CP77.Common.Services;
 using CP77.Common.Tools.FNV1A;
 using CP77.CR2W.Archive;
-using CP77Tools.Common.Services;
 using Newtonsoft.Json;
 using WolvenKit.Common;
 using WolvenKit.Common.Extensions;
-using WolvenKit.Common.Services;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Reflection;
 using WolvenKit.CR2W.Types;
@@ -60,9 +58,24 @@ namespace CP77Tools.Tasks
 
     public static partial class ConsoleFunctions
     {
-        private static byte[] MAGIC = new byte[] {0x43, 0x52, 0x32, 0x57};
+        private static byte[] MAGIC = {0x43, 0x52, 0x32, 0x57};
 
-        public static int DumpTask(string path, bool imports, bool missinghashes, bool texinfo, bool classinfo)
+        public static void DumpTask(string[] path, bool imports, bool missinghashes, bool texinfo, bool classinfo)
+        {
+            if (path == null || path.Length < 1)
+            {
+                logger.LogString("Please fill in an input path", Logtype.Error);
+                return;
+            }
+
+            Parallel.ForEach(path, file =>
+            {
+                DumpTaskInner(file, imports, missinghashes, texinfo, classinfo);
+            });
+
+        }
+
+        public static int DumpTaskInner(string path, bool imports, bool missinghashes, bool texinfo, bool classinfo)
         {
             #region checks
 
@@ -125,10 +138,12 @@ namespace CP77Tools.Tasks
 
 
 
-                    int progress = 0;
                     var total = query.Count;
+                    logger.LogString($"Exporting {total} bundle entries ");
 
-                    Console.Write($"Exporting {total} bundle entries ");
+                    Thread.Sleep(1000);
+                    int progress = 0;
+                    logger.LogProgress(0);
 
                     // foreach extension
                     Parallel.ForEach(query, result =>
@@ -173,15 +188,16 @@ namespace CP77Tools.Tasks
                         ar.Filepath.GetHashMD5(), 0,
                         MemoryMappedFileAccess.Read);
 
-                    int progress = 0;
-
                     var fileDictionary = new ConcurrentDictionary<ulong, Cr2wChunkInfo>();
                     var texDictionary = new ConcurrentDictionary<ulong, Cr2wTextureInfo>();
 
                     // get info
                     var count = ar.FileCount;
+                    logger.LogString($"Exporting {count} bundle entries ");
 
-                    Console.Write($"Exporting {count} bundle entries ");
+                    Thread.Sleep(1000);
+                    int progress = 0;
+                    logger.LogProgress(0);
 
                     Parallel.For(0, count, i =>
                     {
