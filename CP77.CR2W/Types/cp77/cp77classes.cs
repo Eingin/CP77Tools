@@ -2082,7 +2082,16 @@ public class MorphTargetMesh : CVariable
 	[Ordinal(8)] [RED("resourceVersion")] public CUInt8 ResourceVersion { get; set; }
 	public MorphTargetMesh(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { }
 }
-[REDMeta]
+
+	[REDMeta] 
+	public class MorphTargetMeshEntry : CVariable {
+		[Ordinal(0)] [RED("name")] public CName Name { get; set; }
+		[Ordinal(1)] [RED("regionName")] public CName RegionName { get; set; }
+		[Ordinal(2)] [RED("boneNames")] public CArray<CName> BoneNames { get; set; }
+		[Ordinal(3)] [RED("boneRigMatrices")] public CArray<CMatrix> BoneRigMatrices { get; set; }
+		public MorphTargetMeshEntry(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } 
+	}
+	[REDMeta]
 public class CDistantLightsResource : CVariable
 {
 	[Ordinal(0)] [RED("data")] public DataBuffer Data { get; set; }
@@ -15273,8 +15282,29 @@ public class animAnimNode_IntInput : CVariable
 [REDMeta]
 public class rendRenderMorphTargetMeshBlobHeader : CVariable
 {
-	public rendRenderMorphTargetMeshBlobHeader(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { }
+		[Ordinal(0)] [RED("version")] public CUInt32 Version { get; set; }
+		[Ordinal(1)] [RED("numDiffs")] public CUInt32 NumDiffs { get; set; }
+		[Ordinal(2)] [RED("numDiffsMapping")] public CUInt32 NumDiffsMapping { get; set; }
+		[Ordinal(3)] [RED("numTargets")] public CUInt32 NumTargets { get; set; }
+		[Ordinal(4)] [RED("targetStartsInVertexDiffs")] public CArray<CUInt32> TargetStartsInVertexDiffs { get; set; }
+		[Ordinal(5)] [RED("targetStartsInVertexDiffsMapping")] public CArray<CUInt32> TargetStartsInVertexDiffsMapping { get; set; }
+		[Ordinal(6)] [RED("targetPositionDiffScale")] public CArray<Vector4> TargetPositionDiffScale { get; set; }
+		[Ordinal(7)] [RED("targetPositionDiffOffset")] public CArray<Vector4> TargetPositionDiffOffset { get; set; }
+		[Ordinal(8)] [RED("numVertexDiffsInEachChunk")] public CArray<CArray<CUInt32>> NumVertexDiffsInEachChunk { get; set; }
+		[Ordinal(9)] [RED("targetTextureDiffsData")] public CArray<rendRenderMorphTargetMeshBlobTextureData> TargetTextureDiffsData { get; set; }
+		public rendRenderMorphTargetMeshBlobHeader(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { }
 }
+	[REDMeta]
+	public class rendRenderMorphTargetMeshBlobTextureData : CVariable
+    {
+		[Ordinal(0)] [RED("targetDiffScale", 3)] public CStatic<Vector4> TargetDiffScale { get; set; }
+		[Ordinal(1)] [RED("targetDiffOffset", 3)] public CStatic<Vector4> TargetDiffOffset { get; set; }
+		[Ordinal(2)] [RED("targetDiffsDataOffset", 3)] public CStatic<CUInt32> TargetDiffsDataOffset { get; set; }
+		[Ordinal(3)] [RED("targetDiffsDataSize", 3)] public CStatic<CUInt32> TargetDiffsDataSize { get; set; }
+		[Ordinal(4)] [RED("targetDiffsWidth", 3)] public CStatic<CUInt16> TargetDiffsWidth { get; set; }
+		[Ordinal(5)] [RED("targetDiffsMipLevelCounts", 3)] public CStatic<CUInt8> TargetDiffsMipLevelCounts { get; set; }
+		public rendRenderMorphTargetMeshBlobTextureData(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { }
+	}
 [REDMeta]
 public class gameJournalInternetText : CVariable
 {

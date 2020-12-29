@@ -348,7 +348,6 @@ namespace WolvenKit.CR2W.Types
     [REDMeta] public class NPCReference : CVariable { public NPCReference(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } }
     [REDMeta] public class navLocomotionPathSegmentInfo : CVariable { public navLocomotionPathSegmentInfo(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } }
     [REDMeta] public class moveMovementParameters : CVariable { public moveMovementParameters(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } }
-    [REDMeta] public class MorphTargetMeshEntry : CVariable { public MorphTargetMeshEntry(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } }
     [REDMeta] public class meshRegionData : CVariable { public meshRegionData(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } }
     [REDMeta] public class meshPhxClothChunkData : CVariable { public meshPhxClothChunkData(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } }
     [REDMeta] public class meshLocalMaterialHeader : CVariable { public meshLocalMaterialHeader(CR2WFile cr2w, CVariable parent, string name) : base(cr2w, parent, name) { } }
