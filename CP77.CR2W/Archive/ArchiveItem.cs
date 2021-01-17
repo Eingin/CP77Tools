@@ -48,12 +48,25 @@ namespace CP77.CR2W.Archive
             SHA1Hash = sha1hash;
         }
 
+        public (byte[], List<byte[]>) GetFileData()
+        {
+            return _parentArchive.GetFileData(NameHash64, true);
+        }
+
         private void Read(BinaryReader br, IHashService mainController)
         {
             NameHash64 = br.ReadUInt64();
 
             if (mainController != null && mainController.Hashdict.ContainsKey(NameHash64))
                 _nameStr = mainController.Hashdict[NameHash64];
+            
+            // x-platform support
+            if (System.Runtime.InteropServices.RuntimeInformation
+                .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+            {
+                if (!string.IsNullOrEmpty(_nameStr) && _nameStr.Contains('\\'))
+                    _nameStr = _nameStr.Replace('\\', Path.DirectorySeparatorChar);
+            }
 
             DateTime = DateTime.FromFileTime(br.ReadInt64());
 

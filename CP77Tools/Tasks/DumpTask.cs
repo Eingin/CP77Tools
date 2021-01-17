@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.MemoryMappedFiles;
+//using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,9 +14,9 @@ using CP77.CR2W.Archive;
 using Newtonsoft.Json;
 using WolvenKit.Common;
 using WolvenKit.Common.Extensions;
-using WolvenKit.CR2W;
-using WolvenKit.CR2W.Reflection;
-using WolvenKit.CR2W.Types;
+using CP77.CR2W;
+using CP77.CR2W.Reflection;
+using CP77.CR2W.Types;
 
 namespace CP77Tools.Tasks
 {
@@ -121,10 +121,9 @@ namespace CP77Tools.Tasks
             {
                 if (classinfo)
                 {
-                    using var mmf = MemoryMappedFile.CreateFromFile(ar.Filepath, FileMode.Open,
-                        ar.Filepath.GetHashMD5(), 0,
-                        MemoryMappedFileAccess.Read);
-
+                    // using var mmf = MemoryMappedFile.CreateFromFile(ar.Filepath, FileMode.Open,
+                    //     ar.Filepath.GetHashMD5(), 0,
+                    //     MemoryMappedFileAccess.Read);
 
                     var fileinfo = ar.Files.Values;
                     var query = fileinfo.GroupBy(
@@ -152,7 +151,7 @@ namespace CP77Tools.Tasks
                         {
                             Parallel.ForEach(result.File, fi =>
                             {
-                                var (f, b) = ar.GetFileData(fi.NameHash64, mmf);
+                                var (f, b) = ar.GetFileData(fi.NameHash64, false);
                                 using var ms = new MemoryStream(f);
                                 using var br = new BinaryReader(ms);
 
@@ -184,9 +183,9 @@ namespace CP77Tools.Tasks
                 }
                 if (imports || texinfo)
                 {
-                    using var mmf = MemoryMappedFile.CreateFromFile(ar.Filepath, FileMode.Open,
-                        ar.Filepath.GetHashMD5(), 0,
-                        MemoryMappedFileAccess.Read);
+                    // using var mmf = MemoryMappedFile.CreateFromFile(ar.Filepath, FileMode.Open,
+                    //     ar.Filepath.GetHashMD5(), 0,
+                    //     MemoryMappedFileAccess.Read);
 
                     var fileDictionary = new ConcurrentDictionary<ulong, Cr2wChunkInfo>();
                     var texDictionary = new ConcurrentDictionary<ulong, Cr2wTextureInfo>();
@@ -207,7 +206,7 @@ namespace CP77Tools.Tasks
 
                         if (imports)
                         {
-                            var (f, buffers) = ar.GetFileData(hash, mmf);
+                            var (f, buffers) = ar.GetFileData(hash, false);
 
                             // check if cr2w file
                             if (f.Length < 4)
@@ -237,7 +236,7 @@ namespace CP77Tools.Tasks
                         {
                             if (!string.IsNullOrEmpty(entry.Value.FileName) && entry.Value.FileName.Contains(".xbm"))
                             {
-                                var (f, buffers) = ar.GetFileData(hash, mmf);
+                                var (f, buffers) = ar.GetFileData(hash, false);
 
                                 // check if cr2w file
                                 if (f.Length < 4)

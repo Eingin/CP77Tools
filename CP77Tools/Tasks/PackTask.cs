@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Catel.IoC;
 using CP77.Common.Services;
 using CP77.Common.Tools.FNV1A;
+using CP77.CR2W;
 using CP77.CR2W.Archive;
 using WolvenKit.Common.Tools.DDS;
 
@@ -44,22 +45,14 @@ namespace CP77Tools.Tasks
                 return;
             }
 
-            var inputFileInfo = new FileInfo(path);
             var inputDirInfo = new DirectoryInfo(path);
-
-            if (!inputFileInfo.Exists && !inputDirInfo.Exists)
+            if (!Directory.Exists(path) || !inputDirInfo.Exists)
             {
                 logger.LogString("Input path does not exist", Logtype.Error);
                 return;
             }
 
-            if (inputFileInfo.Exists == true && inputFileInfo.Extension != ".archive")
-            {
-                logger.LogString("Input file is not an .archive", Logtype.Error);
-                return;
-            }
-
-            var basedir = inputFileInfo.Exists ? new FileInfo(path).Directory : inputDirInfo;
+            var basedir = inputDirInfo;
             if (basedir?.Parent == null) return;
 
             DirectoryInfo outDir;
@@ -76,8 +69,11 @@ namespace CP77Tools.Tasks
 
             #endregion
 
-            Archive.WriteFromFolder(basedir, outDir);
-            logger.LogString($"Finished dumping {Path.Combine(outDir.FullName, "blob0.archive")}.", Logtype.Success);
+            var ar = ModTools.Pack(basedir, outDir);
+            if (ar != null)
+                logger.LogString($"Finished packing {ar.Filepath}.", Logtype.Success);
+            else
+                logger.LogString($"Packing failed.", Logtype.Error);
 
             return;
         }

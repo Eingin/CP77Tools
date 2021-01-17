@@ -51,6 +51,12 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+#rider
+.idea
+
+#macOS
+.DS_Store
+
 #obj
 *obj/
 *bin/
@@ -61,3 +67,4 @@ CP77Tools/Resources/archivehashes.csv
 
 #include
 !texconv.exe
+!liboodle.dylib
